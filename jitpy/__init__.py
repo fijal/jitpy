@@ -15,11 +15,13 @@ def setup(pypy_home):
     int pypy_execute_source_ptr(char* source, void* ptr);
 
     """)
-    os.environ['LD_LIBRARY_PATH'] = os.path.join(pypy_home, 'bin')
+    pypy_home = os.path.abspath(pypy_home)
 
     lib = ffi.verify("""
     #include <include/PyPy.h>
-    """, libraries=["pypy-c"], include_dirs=[pypy_home], library_dirs=[os.path.join(pypy_home, 'bin')])
+    """, libraries=["pypy-c"], include_dirs=[pypy_home],
+        library_dirs=[os.path.join(pypy_home, 'bin')],
+        extra_link_args=['-Wl,-rpath,%s' % os.path.join(pypy_home, 'bin')])
     curdir = os.path.dirname(os.path.abspath(__file__))
     defs = os.path.join(curdir, 'pypy.defs')
     ffi.cdef(open(defs).read())
