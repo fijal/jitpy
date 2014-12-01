@@ -86,7 +86,7 @@ be magically visible from the other side. The API looks like this:
     def func():
         return X(42).x
 
-	func()
+    func()
 
   this will work, however trying to reference ``Y`` from inside the ``func``
   will result in ``NameError`` exception.
