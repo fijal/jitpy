@@ -48,6 +48,40 @@ def setup(pypy_home):
     if res:
         raise Exception("error running pypy side")
 
+    ffi2 = cffi.FFI()
+    ffi2.cdef("""
+    typedef struct {
+       ...;
+    } PyObject;
+
+    typedef struct {
+       ...;
+    } PyArray_Descr;
+    
+    typedef struct {
+       char *data;
+       int nd;
+       intptr_t *dimensions;
+       intptr_t *strides;
+       PyObject *base;
+       PyArray_Descr *descr;
+       int flags;
+       PyObject *weakreflist;
+       ...;
+    } PyArrayObject_fields;
+    """)
+    lib = ffi2.verify("""
+    #include <Python.h>
+    #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+    #include <numpy/arrayobject.h>
+    """)
+    ptr.setup_numpy_data(ffi2.new("int[4]", [
+        ffi2.offsetof("PyArrayObject_fields", "data"),
+        ffi2.offsetof("PyArrayObject_fields", "strides"),
+        ffi2.offsetof("PyArrayObject_fields", "dimensions"),
+        ffi2.offsetof("PyArrayObject_fields", "nd"),
+    ]))
+
     globals()['ffi'] = ffi
     globals()['ptr'] = ptr
 

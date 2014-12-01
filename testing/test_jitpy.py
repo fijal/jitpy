@@ -44,3 +44,15 @@ class TestJitPy(object):
 
         e = py.test.raises(JitPyException, func)
         assert 'Exception:foo' in str(e.value)
+
+    def test_numpy_array(self):
+        import numpy
+
+        @jittify(['array', int], None)
+        def func(a, s):
+            for i in range(a.shape[0]):
+                a[i] += s
+
+        a = numpy.array([1, 2, 3])
+        func(a, 3)
+        assert a[0] == 4
