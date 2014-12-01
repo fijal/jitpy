@@ -36,10 +36,15 @@ have very different characteristics. A simple example::
 This function will perform computations in the underlaying PyPy, thus yielding
 a significant speed benefit (around 50x in my case)
 
-Indices and tables
-==================
+Installing
+==========
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+jitpy requires a new PyPy (newer than 28th of Nov), which can be e.g.
+downloaded from PyPy `nightlies`_. Otherwise it can be installed via
+``pip install jitpy``.
 
+Using
+=====
+
+.. _`nightlies`: http://buildbot.pypy.org/nightly/trunk/
+.. _`numba`: http://numba.pydata.org/
