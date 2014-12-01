@@ -1,0 +1,4 @@
+
+typedef struct pypy_defs {
+   void* (* basic_register)(char *, char *, char *);
+} pypy_defs;
