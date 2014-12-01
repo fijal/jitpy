@@ -75,8 +75,8 @@ be magically visible from the other side. The API looks like this:
   .. code-block:: python
 
     jitpy.extra_source("""class X:
-    def __init__(self, x):
-        self.x = x
+        def __init__(self, x):
+            self.x = x
     """)
 
     class Y(object):
