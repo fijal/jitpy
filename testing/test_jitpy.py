@@ -1,12 +1,15 @@
 
 import os
-from jitpy import setup
+from jitpy import setup, extra_source
 if 'PYPY_HOME' not in os.environ:
     raise Exception("please setup PYPY_HOME to point to your pypy installation")
 setup(os.environ['PYPY_HOME'])
-from jitpy.wrapper import jittify
+from jitpy.wrapper import jittify, clean_namespace
 
 class TestJitPy(object):
+    def setup_method(self, meth):
+        clean_namespace()
+    
     def test_float_func(self):
         @jittify([float, float], float)
         def func(a, b):
@@ -20,3 +23,15 @@ class TestJitPy(object):
             return a + b
 
         assert func(2, 4) == 6
+
+    def test_cross_reference(self):
+        extra_source("""class X:
+        def __init__(self, x):
+            self.x = x
+        """)
+
+        @jittify([], int)
+        def func():
+            return X(42).x
+
+        assert func() == 42

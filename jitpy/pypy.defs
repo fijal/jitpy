@@ -1,4 +1,6 @@
 
 typedef struct pypy_defs {
+   void (*clean_namespace)();
    void* (* basic_register)(char *, char *, char *);
+   void (*extra_source)(char *);
 } pypy_defs;

@@ -3,6 +3,8 @@ import py
 import cffi
 import os
 
+ptr = None
+
 def setup(pypy_home):
     ffi = cffi.FFI()
     ffi.cdef("""
@@ -48,3 +50,8 @@ def setup(pypy_home):
 
     globals()['ffi'] = ffi
     globals()['ptr'] = ptr
+
+def extra_source(source):
+    if not ptr:
+        raise Exception("jitpy not initialized, call jitpy.setup(pypy_home)")
+    ptr.extra_source(source)

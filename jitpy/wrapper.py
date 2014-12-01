@@ -12,6 +12,8 @@ def jittify(argtypes, restype):
     """ Wrap function into a callable visible from CPython, but run on
     underlaying PyPy.
     """
+    if not ptr:
+        raise Exception("jitpy not initialized, call jitpy.setup(pypy_home)")
     ll_tp = converters[restype] + ' (*)(' + ', '.join(
         [converters[arg] for arg in argtypes]) + ')'
     def decorator(fn):
@@ -28,3 +30,8 @@ def jittify(argtypes, restype):
             raise Exception("basic_register failed")
         return ffi.cast(ll_tp, handle)
     return decorator
+
+def clean_namespace():
+    if not ptr:
+        raise Exception("jitpy not initialized, call jitpy.setup(pypy_home)")
+    ptr.clean_namespace()
