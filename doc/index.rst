@@ -43,8 +43,10 @@ jitpy requires a new PyPy (newer than 28th of Nov), which can be e.g.
 downloaded from PyPy `nightlies`_. Otherwise it can be installed via
 ``pip install jitpy``.
 
-Using
-=====
+Using jitpy
+===========
+
+xxxx
 
 .. _`nightlies`: http://buildbot.pypy.org/nightly/trunk/
 .. _`numba`: http://numba.pydata.org/

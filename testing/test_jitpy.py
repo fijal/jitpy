@@ -1,6 +1,7 @@
 
-import os
+import os, py
 from jitpy import setup, extra_source
+from jitpy.exc import JitPyException
 if 'PYPY_HOME' not in os.environ:
     raise Exception("please setup PYPY_HOME to point to your pypy installation")
 setup(os.environ['PYPY_HOME'])
@@ -35,3 +36,11 @@ class TestJitPy(object):
             return X(42).x
 
         assert func() == 42
+
+    def test_exception_wrapping(self):
+        @jittify([], int)
+        def func():
+            raise Exception("foo")
+
+        e = py.test.raises(JitPyException, func)
+        assert 'Exception:foo' in str(e.value)

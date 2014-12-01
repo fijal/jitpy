@@ -1,0 +1,3 @@
+
+class JitPyException(Exception):
+    pass
