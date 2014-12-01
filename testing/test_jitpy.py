@@ -1,6 +1,6 @@
 
 import os
-from jitpy.wrapper import setup
+from jitpy import setup
 if 'PYPY_HOME' not in os.environ:
     raise Exception("please setup PYPY_HOME to point to your pypy installation")
 setup(os.environ['PYPY_HOME'])
