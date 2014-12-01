@@ -18,7 +18,9 @@ jitpy is a hack to embed your PyPy inside your CPython, so you can
 call pypy-optimized functions from cpython using limited interface,
 provided the types you pass are either simple immutable types or numpy
 arrays. It's similar in the use patters to `numba`_, however it does
-have very different characteristics. A simple example::
+have very different characteristics. A simple example
+
+.. code-block:: python
 
   from jitpy import setup
   setup('<path-to-pypy-home>')
@@ -68,7 +70,9 @@ be magically visible from the other side. The API looks like this:
   * ``'array'`` - a numpy array
 
 * ``jitpy.extra_source(source)`` - this will export the extra source visible
-  from the other side. Example::
+  from the other side. Example:
+
+  .. code-block:: python
 
     jitpy.extra_source("""class X:
     def __init__(self, x):
