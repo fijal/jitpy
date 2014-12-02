@@ -18,12 +18,19 @@ def setup(pypy_home):
 
     """)
     pypy_home = os.path.abspath(pypy_home)
+    libdir = py.path.local(pypy_home)
+    if not libdir.join('libpypy-c.so').check():
+        libdir = libdir.join('bin')
+        if not libdir.join('libpypy-c.so').check():
+            raise Exception("Can't find libpypy-c.so")
+    libdir = str(libdir)
 
     lib = ffi.verify("""
     #include <include/PyPy.h>
-    """, libraries=["pypy-c"], include_dirs=[pypy_home, os.path.dirname(pypy_home)],
-        library_dirs=[pypy_home],
-        extra_link_args=['-Wl,-rpath,%s' % pypy_home])
+    """, libraries=["pypy-c"],
+        include_dirs=[pypy_home, os.path.dirname(pypy_home)],
+        library_dirs=[libdir],
+        extra_link_args=['-Wl,-rpath,%s' % libdir])
     curdir = os.path.dirname(os.path.abspath(__file__))
     defs = os.path.join(curdir, 'pypy.defs')
     ffi.cdef(open(defs).read())
