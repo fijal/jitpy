@@ -62,10 +62,11 @@ be magically visible from the other side. The API looks like this:
 * ``jitpy.setup(pypy_home)`` - has to be called before anything in order to
   point to the correct PyPy build directory
 
-* ``jitpy.wrapper.jittify(argtypes, restype)`` - a wrapper that's passed
+* ``jitpy.wrapper.jittify(argtypes, restype=None)`` - a wrapper that's passed
   argument types as a list and restype as on of the:
 
-  * ``int, float, string`` - immutable types
+  * ``int, float, string`` - immutable types. Additionally ``None`` can
+    be used for return type
 
   * ``'array'`` - a numpy array, can only be used as an argument, not a return
     value. Also only simple types are supported for now (no compound dtypes,

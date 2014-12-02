@@ -54,24 +54,31 @@ def convert_from_numpy_array(ll_a):
     return numpy.ndarray(dims, buffer=data, dtype=dtype)
 
 def wrap_exception_and_arrays(func, arrays):
-    def wrapper(*args):
-        global last_exception
+    args = ', '.join(['arg%d' % i for i in range(len(arrays))])
+    conversions = []
+    for i, arg in enumerate(arrays):
+        if arg == 'a':
+            conversions.append('        arg%d = convert_from_numpy_array(arg%d)'
+                               % (i, i))
+    conversions = '\n'.join(conversions)
+    source = """def wrapper(%(args)s):
+    global last_exception
 
-        newargs = []
-        try:
-            for i, arg in enumerate(args):
-                if arrays[i] == 'a':
-                    newargs.append(convert_from_numpy_array(arg))
-                else:
-                    newargs.append(arg)
-            return func(*newargs)
-        except Exception, e:
-            tb_repr = (''.join(traceback.format_tb(sys.exc_info()[2])) +
-                       '%s:%s' % (e.__class__.__name__, e))
-            last_exception = ffi.new('char[]', tb_repr)
-            pypy_def.last_exception = last_exception
-            return 0
-    return wrapper
+    try:
+%(conversions)s
+        return func(%(args)s)
+    except Exception, e:
+        tb_repr = (''.join(traceback.format_tb(sys.exc_info()[2])) +
+                   '%%s:%%s' %% (e.__class__.__name__, e))
+        last_exception = ffi.new('char[]', tb_repr)
+        pypy_def.last_exception = last_exception
+    return 0
+    """ % {'args': args, 'conversions': conversions}
+    namespace = {'traceback': traceback, 'ffi': ffi, 'pypy_def': pypy_def,
+                 'func': func, 'sys': sys,
+                 'convert_from_numpy_array': convert_from_numpy_array}
+    exec source in namespace
+    return namespace['wrapper']
 
 @ffi.callback("void* (*)(char *, char *, char *, char *)")
 def basic_register(ll_source, ll_name, ll_tp, ll_arrays):
