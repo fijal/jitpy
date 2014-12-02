@@ -136,12 +136,62 @@ under PyPy gives 0.003s (30x speedup) and 0.11s (8.6x speedup), which means
 that if you have a high granularity of functions that can't be nicely separated,
 a wholesome solution like PyPy gives more benefits.
 
-The `array benchmark`_ gives ....
+The `array benchmark`_ gives insight into passing arrays into the functions
+and doing more advanced things. The benchmarks do, in order:
+
+* pass 1d array, walk it for a sum (equivalent to ``sum(a)``)
+
+* pass 2d array, walk it for a sum (equivalent to ``sum(a)``)
+
+* pass 2d array, walk it, create tuple of size two and count the length
+
+* pass 2d array, walk it, create an instance of a class and read it's attribute
+
+Benchmarks grow in complexity as what sort of stuff is done in them (and also
+grow in silliness). Results are as follows. Notes:
+
+* we do 10x less iterations with CPython just because of how bloody slow it is
+
+* because we don't cross boundary much, the numbers for jitpy should be
+  very similar to what you would get running pure PyPy
+
++---------------+--------------+---------------------+---------------------+
+| benchmark     | pure python  | jitpy               | numba               |
++---------------+--------------+---------------------+---------------------+
+| 1d array      | 12.7s (1.0x) | 0.28s (45x faster)  | 0.21s (60x faster)  |
++---------------+--------------+---------------------+---------------------+
+| 2d array      | 16s (1.0x)   | 0.35s (46x faster)  | 0.22s (73x faster)  |
++---------------+--------------+---------------------+---------------------+
+| 2d + tuple    | 33.5s (1.0x) | 0.30s (104x faster) | 64.5s (1.9x slower) |
++---------------+--------------+---------------------+---------------------+
+| 2d + instance | 48.4s (1.0x) | 0.30s (161x faster) | 53.9s (1.1x slower) |
++---------------+--------------+---------------------+---------------------+
+
+The benchmark results might look very confusing, but here are my takeaways:
+
+* CPython is slow at numerics
+
+* if everything is perfect for numba to emit optimize LLVM code, LLVM does a
+  very good job
+
+* PyPy (and jitpy) is slightly to moderately slower than numba for simple cases
+
+* PyPy (and jitpy) is vastly better for complicated cases that involve more
+  of Python semantics.
+
+After all, it makes sense - numba is a specific tool that does not try
+to be fast on all Python code, while PyPy runs all Python code and tries
+to be fast on it.
+
+PyPy (and jitpy) also supports more of Python (in fact all), so it's possible
+to get tracebacks, ``try:``, ``except:`` clauses, ``imports`` etc. etc.
+that are simply not supported by numba.
+
+However, your mileage may vary, try tools before jumping into conclusions.
 
 .. _`nightlies`: http://buildbot.pypy.org/nightly/trunk/
 .. _`numba`: http://numba.pydata.org/
-.. _`basic benchmark`: xxx
-.. _`array benchmark`: xxx
-
+.. _`basic benchmark`: https://github.com/fijal/jitpy/blob/master/benchmarks/basic.py
+.. _`array benchmark`: https://github.com/fijal/jitpy/blob/master/benchmarks/array.py
 * :ref:`genindex`
 * :ref:`search`
