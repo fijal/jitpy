@@ -68,7 +68,8 @@ be magically visible from the other side. The API looks like this:
   * ``int, float, string`` - immutable types
 
   * ``'array'`` - a numpy array, can only be used as an argument, not a return
-    value
+    value. Also only simple types are supported for now (no compound dtypes,
+    no string, unicode) or object dtypes
 
 * ``jitpy.extra_source(source)`` - this will export the extra source visible
   from the other side. Example:
