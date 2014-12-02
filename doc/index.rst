@@ -44,7 +44,7 @@ Motivation
 Installing
 ==========
 
-jitpy requires a new PyPy (newer than 28th of Nov), which can be e.g.
+jitpy requires a new PyPy (newer than 2nd of Dec 2014), which can be e.g.
 downloaded from PyPy `nightlies`_. Otherwise it can be installed via
 ``pip install jitpy``.
 
