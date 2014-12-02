@@ -67,7 +67,7 @@ def wrap_exception_and_arrays(func, arrays):
     try:
 %(conversions)s
         return func(%(args)s)
-    except Exception, e:
+    except BaseException, e:
         tb_repr = (''.join(traceback.format_tb(sys.exc_info()[2])) +
                    '%%s:%%s' %% (e.__class__.__name__, e))
         last_exception = ffi.new('char[]', tb_repr)
