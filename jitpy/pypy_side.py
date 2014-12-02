@@ -51,7 +51,7 @@ def convert_from_numpy_array(ll_a):
     descr = ffi.cast('char*', (ll_a + NumpyData.descr_offset)[0])
     type_num = ffi.cast('int*', descr + NumpyData.type_num_offset)[0]
     dtype = numpy_types[type_num]
-    return numpy.ndarray(dims, buffer=data, dtype=dtype)
+    return numpy.ndarray(dims, buffer=data, dtype=dtype, strides=strides)
 
 def wrap_exception_and_arrays(func, arrays):
     args = ', '.join(['arg%d' % i for i in range(len(arrays))])

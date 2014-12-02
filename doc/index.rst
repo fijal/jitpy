@@ -60,7 +60,8 @@ that the namespaces are separate and all the functions and classes won't
 be magically visible from the other side. The API looks like this:
 
 * ``jitpy.setup(pypy_home)`` - has to be called before anything in order to
-  point to the correct PyPy build directory
+  point to the correct PyPy build directory. ``pypy_home`` points to the
+  directory of pypy checkout/installation
 
 * ``jitpy.wrapper.jittify(argtypes, restype=None)`` - a wrapper that's passed
   argument types as a list and restype as on of the:

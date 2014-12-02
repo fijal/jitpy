@@ -21,17 +21,16 @@ def setup(pypy_home):
 
     lib = ffi.verify("""
     #include <include/PyPy.h>
-    """, libraries=["pypy-c"], include_dirs=[pypy_home],
-        library_dirs=[os.path.join(pypy_home, 'bin')],
-        extra_link_args=['-Wl,-rpath,%s' % os.path.join(pypy_home, 'bin')])
+    """, libraries=["pypy-c"], include_dirs=[pypy_home, os.path.dirname(pypy_home)],
+        library_dirs=[pypy_home],
+        extra_link_args=['-Wl,-rpath,%s' % pypy_home])
     curdir = os.path.dirname(os.path.abspath(__file__))
     defs = os.path.join(curdir, 'pypy.defs')
     ffi.cdef(open(defs).read())
     lib.rpython_startup_code()
-    res = lib.pypy_setup_home(os.path.join(os.path.abspath(pypy_home), 'bin'),
-                              1)
+    res = lib.pypy_setup_home(os.path.join(pypy_home, 'bin'), 1)
     pypy_side = os.path.join(curdir, 'pypy_side.py')
-    if res == -1:
+    if res == 1:
         raise Exception("cannot init pypy")
     ptr = ffi.new("struct pypy_defs*")
     res = lib.pypy_execute_source_ptr(str(py.code.Source("""
