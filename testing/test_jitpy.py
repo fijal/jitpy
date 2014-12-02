@@ -56,3 +56,27 @@ class TestJitPy(object):
         a = numpy.array([1, 2, 3])
         func(a, 3)
         assert a[0] == 4
+
+    def test_numpy_array_float(self):
+        import numpy
+
+        @jittify(['array', int], None)
+        def func(a, s):
+            for i in range(a.shape[0]):
+                a[i] += s
+
+        a = numpy.array([1.2, 2, 3], dtype=float)
+        func(a, 3)
+        assert a[0] == 1.2 + 3
+
+    def test_numpy_array_singlefloat(self):
+        import numpy
+
+        @jittify(['array', int], None)
+        def func(a, s):
+            for i in range(a.shape[0]):
+                a[i] += s
+
+        a = numpy.array([1.2, 2, 3], dtype='f32')
+        func(a, 3)
+        assert (a[0] - (1.2 + 3)) < 0.0000001 # inexact

@@ -55,6 +55,9 @@ def setup(pypy_home):
     } PyObject;
 
     typedef struct {
+       char kind;
+       char type;
+       int type_num;
        ...;
     } PyArray_Descr;
     
@@ -75,11 +78,13 @@ def setup(pypy_home):
     #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
     #include <numpy/arrayobject.h>
     """)
-    ptr.setup_numpy_data(ffi2.new("int[4]", [
+    ptr.setup_numpy_data(ffi2.new("int[6]", [
         ffi2.offsetof("PyArrayObject_fields", "data"),
         ffi2.offsetof("PyArrayObject_fields", "strides"),
         ffi2.offsetof("PyArrayObject_fields", "dimensions"),
         ffi2.offsetof("PyArrayObject_fields", "nd"),
+        ffi2.offsetof("PyArrayObject_fields", "descr"),
+        ffi2.offsetof("PyArray_Descr", "type_num"),
     ]))
 
     globals()['ffi'] = ffi

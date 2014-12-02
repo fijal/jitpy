@@ -29,7 +29,6 @@ def jittify(argtypes, restype):
 
     def convert(ll_tp, arg):
         if ll_tp == 'array':
-            assert arg.dtype == int # for now
             return ffi.cast("void *", id(arg))
         return arg
     

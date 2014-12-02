@@ -16,6 +16,29 @@ if sys.maxint == (1 << 31) - 1:
 else:
     WORD = 8
 
+# XXX copy
+numpy_types = {
+    0: 'b',
+    1: 'i1',
+    2: 'u1',
+    3: 'i2',
+    4: 'u2',
+    5: 'int',
+    6: 'uint',
+    7: 'int',
+    8: 'uint',
+    9: 'longlong',
+    10: 'ulonglong',
+    11: 'single',
+    12: 'double',
+    13: 'longdouble',
+    14: 'csingle',
+    15: 'cdouble',
+    16: 'clongdouble',
+    #17: 'object',
+    # rest not supported
+}
+
 def convert_from_numpy_array(ll_a):
     data = (ll_a + NumpyData.data_offset)[0]
     strides = ffi.cast("intptr_t*", (ll_a + NumpyData.strides_offset)[0])
@@ -25,7 +48,10 @@ def convert_from_numpy_array(ll_a):
     strides = [strides[i] for i in range(nd)]
     data = ffi.buffer(ffi.cast("char*", data), sys.maxint)
     # XXX strides
-    return numpy.ndarray(dims, buffer=data, dtype=int)
+    descr = ffi.cast('char*', (ll_a + NumpyData.descr_offset)[0])
+    type_num = ffi.cast('int*', descr + NumpyData.type_num_offset)[0]
+    dtype = numpy_types[type_num]
+    return numpy.ndarray(dims, buffer=data, dtype=dtype)
 
 def wrap_exception_and_arrays(func, arrays):
     def wrapper(*args):
@@ -77,6 +103,8 @@ def setup_numpy_data(offsets):
     NumpyData.strides_offset = offsets[1] / WORD
     NumpyData.dimensions_offset = offsets[2] / WORD
     NumpyData.nd_offset = offsets[3] / WORD
+    NumpyData.descr_offset = offsets[4] / WORD
+    NumpyData.type_num_offset = offsets[5]
 
 pypy_def = ffi.cast("struct pypy_defs*", c_argument)
 pypy_def.basic_register = basic_register
