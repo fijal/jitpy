@@ -110,10 +110,38 @@ respect all the libraries installed in the underlaying ``pypy``.
 Benchmarks
 ==========
 
-xxx
+Everyone loves benchmarks. The way one presents benchmarks is very important.
+I'm going to compare on a limited set of benchmarks various tools designed
+for a specific purpose -- speeding up Python in pieces or in whole without
+learning a new language. That means that tools like Cython, C, Fortran are
+out of scope of this comparison. I'm going to compare CPython, jitpy, numba
+and to some extent PyPy.
+
+The `basic benchmark`_ measures the overhead of calling through the layer.
+The first example is empty function, the second loops ten times to do 
+three additions, in order to run **any** python code.
+
++-----------+--------------+---------------------+---------------------+
+| benchmark | pure python  | jitpy               | numba               |
++-----------+--------------+---------------------+---------------------+
+| return 1  | 0.09s (1.0x) | 0.58s (6.4x slower) | 0.36s (4x slower)   |
++-----------+--------------+---------------------+---------------------+
+| loop 10   | 0.95s (1.0x) | 0.8s (1.2x faster)  | 0.39s (2.4x faster) |
++-----------+--------------+---------------------+---------------------+
+
+While an interesting data point, this generally points out you should not
+write very tiny functions using those layers, but as soon as there is any
+work done, CPython is just very slow. For a comparison, running this example
+under PyPy gives 0.003s (30x speedup) and 0.11s (8.6x speedup), which means
+that if you have a high granularity of functions that can't be nicely separated,
+a wholesome solution like PyPy gives more benefits.
+
+The `array benchmark`_ gives ....
 
 .. _`nightlies`: http://buildbot.pypy.org/nightly/trunk/
 .. _`numba`: http://numba.pydata.org/
+.. _`basic benchmark`: xxx
+.. _`array benchmark`: xxx
 
 * :ref:`genindex`
 * :ref:`search`
