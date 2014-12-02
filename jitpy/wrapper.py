@@ -19,6 +19,8 @@ def jittify(argtypes, restype):
         raise Exception("jitpy not initialized, call jitpy.setup(pypy_home)")
     ll_tp = converters[restype] + ' (*)(' + ', '.join(
         [converters[arg] for arg in argtypes]) + ')'
+    if restype == 'array':
+        raise TypeError("Cannot use arrays as a return type yet")
     ll_arrays = []
     for arg in argtypes:
         if arg == 'array':
