@@ -149,9 +149,9 @@ three additions, in order to run **any** python code.
 
 While this is an interesting data point, this generally points out you should not
 write very tiny functions using those layers, but as soon as there is any
-work done, CPython is just very slow. For a comparison, running this example
-.. XXX: which example?
-under PyPy gives 0.003s (30x speedup) and 0.11s (8.6x speedup), which means
+work done, CPython is just very slow. For a comparison, running those benchmarks
+under PyPy gives, respectively, 0.003s (30x speedup) and 0.11s (8.6x speedup),
+which means
 that if you have a high granularity of functions that can't be nicely separated,
 a wholesome solution like PyPy gives more benefits.
 
