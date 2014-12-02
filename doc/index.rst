@@ -14,11 +14,14 @@ Contents:
 What it jitpy?
 ==============
 
-jitpy is a hack to embed your PyPy inside your CPython, so you can
-call pypy-optimized functions from cpython using limited interface,
-provided the types you pass are either simple immutable types or numpy
-arrays. It's similar in the use patters to `numba`_, however it does
-have very different characteristics. A simple example
+jitpy is a hack to embed PyPy inside CPython: the goal is to let PyPy optimize
+selected functions and call them from CPython.  The provided interface is
+limited: you can pass only simple builtin immutable types and numpy
+arrays. In other words, you cannot pass lists, dicts, and instances of custom
+classes.
+
+The usage pattern is similar to `numba`_, though it does have very different
+characteristics. A simple example
 
 .. code-block:: python
 
@@ -35,8 +38,8 @@ have very different characteristics. A simple example
 
   func(100000, 1.2)
 
-This function will perform computations in the underlaying PyPy, thus yielding
-a significant speed benefit (around 50x in my case)
+This function will be executed by the underlying PyPy, thus yielding a
+significant speed benefit (around 50x in my own measurements).
 
 Motivation
 ==========
@@ -44,20 +47,30 @@ Motivation
 Installing
 ==========
 
-jitpy requires a new PyPy (newer than 2nd of Dec 2014), which can be e.g.
-downloaded from PyPy `nightlies`_. Otherwise it can be installed via
-``pip install jitpy``.
+You can install jitpy using ``pip install jitpy`` in your CPython
+installation.
+
+You also need to download and unpack a very recent PyPy (newer than 2nd of Dec
+2014), which can be e.g.  downloaded from PyPy `nightlies`_.
+
 
 Using jitpy
 ===========
 
-jitpy is not magic - what it does it moves code across the boundary
-between two different Python implementations. It means that while PyPy and
+jitpy is not magic - what it does is to move code across the boundary
+between the two different Python implementations. It means that while PyPy and
 CPython don't share any data, you can pass ``ints``, ``floats``, ``strings``
 and ``numpy arrays`` without copying, since it's done in-process. It's also
-faster compared to out-of-process solutions. However, one needs to remember
-that the namespaces are separate and all the functions and classes won't
-be magically visible from the other side. The API looks like this:
+faster compared to out-of-process solutions, like ``multiprocessing``.
+However, one needs to remember
+that the global state and the namespaces of the two interpreters are separate,
+which means that the functions and classes declared on CPython won't be
+automatically available in PyPy, and viceversa. Moreover, if you import the
+same module in both interpreters, the module will be actually imported twice,
+which can make a difference in case of modules which have side-effects when
+imported.
+
+The API looks like this:
 
 * ``jitpy.setup(pypy_home)`` - has to be called before anything in order to
   point to the correct PyPy build directory. ``pypy_home`` points to the
@@ -73,12 +86,14 @@ be magically visible from the other side. The API looks like this:
     value. Also only simple types are supported for now (no compound dtypes,
     no string, unicode) or object dtypes
 
-* ``jitpy.extra_source(source)`` - this will export the extra source visible
-  from the other side. Example:
+* ``jitpy.extra_source(source)`` - executes ``source`` inside PyPy. The
+  classes and functions defined there will be visible by the functions
+  decorated with ``@jittify``. For example:
 
   .. code-block:: python
 
-    jitpy.extra_source("""class X:
+    jitpy.extra_source("""
+    class X:
         def __init__(self, x):
             self.x = x
     """)
@@ -93,11 +108,14 @@ be magically visible from the other side. The API looks like this:
     func()
 
   this will work, however trying to reference ``Y`` from inside the ``func``
-  will result in ``NameError`` exception.
+  will result in a ``NameError`` exception.
 
-Any Python is allowed within the function, including imports, pdb, everything,
-however ``sys.path`` is **not** inherited, so has to be set up separately within
-the ``extra_source`` or some exported function definition.
+Differently than numba, you can use all Python constructs inside jitted
+functions, including the most dynamic ones like ``import``, ``pdb``,
+``sys._getframe``, ``ex ec``, etc.  However note that ``sys.path`` is **not**
+inherited: if you want to include extra directories in ``sys.path``, you need
+to modify it explicitly using ``jitpy.extra_source``.
+
 
 Limitations
 ===========
@@ -105,7 +123,7 @@ Limitations
 The API is limited to builtin types, because it's easy to see how the boundary
 looks like. Numpy arrays can be shared, because the data is visible as a pointer
 in C on the low level. ``sys.path`` has to be initialized separately, but will
-respect all the libraries installed in the underlaying ``pypy``.
+respect all the libraries installed in the underlying ``pypy``.
 
 Benchmarks
 ==========
@@ -129,9 +147,10 @@ three additions, in order to run **any** python code.
 | loop 10   | 0.95s (1.0x) | 0.8s (1.2x faster)  | 0.39s (2.4x faster) |
 +-----------+--------------+---------------------+---------------------+
 
-While an interesting data point, this generally points out you should not
+While this is an interesting data point, this generally points out you should not
 write very tiny functions using those layers, but as soon as there is any
 work done, CPython is just very slow. For a comparison, running this example
+.. XXX: which example?
 under PyPy gives 0.003s (30x speedup) and 0.11s (8.6x speedup), which means
 that if you have a high granularity of functions that can't be nicely separated,
 a wholesome solution like PyPy gives more benefits.
