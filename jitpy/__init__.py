@@ -20,9 +20,8 @@ def setup(pypy_home):
     pypy_home = os.path.abspath(pypy_home)
     libdir = py.path.local(pypy_home)
     if not libdir.join('libpypy-c.so').check():
-        libdir = libdir.join('bin')
-        if not libdir.join('libpypy-c.so').check():
-            raise Exception("Can't find libpypy-c.so")
+        raise Exception("Can't find libpypy-c.so, point PYPY_HOME to "
+                        "directory with libpypy-c.so")
     libdir = str(libdir)
 
     lib = ffi.verify("""
