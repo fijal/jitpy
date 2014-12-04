@@ -54,8 +54,14 @@ An example of usage:
 
 Download `64bit binary`_ or `32bit binary`_ for linux::
 
-
-
+   ~$ wget http://buildbot.pypy.org/nightly/trunk/pypy-c-jit-74798-f1b314da580e-linux64.tar.bz2
+   ~$ tar xjf pypy-c-jit-74798-f1b314da580e-linux64.tar.bz2
+   ~$ export PYPY_HOME=`pwd`/pypy-c-jit-74798-f1b314da580e-linux64/bin/
+   ~$ pip install jitpy
+   
+And you should be able not run examples (**NOTE:** since jitpy takes source
+code via ``inspect`` module, you can't run jittify on functions typed
+from python interactive prompt)
 
 Using jitpy
 ===========

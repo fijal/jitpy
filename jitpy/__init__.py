@@ -2,6 +2,11 @@
 import py
 import cffi
 import os
+try:
+    import numpy
+except:
+    raise Exception("numpy install is required - warning numpy will not "
+                    "install it's headers if installed via pip")
 
 ptr = None
 
