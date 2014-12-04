@@ -17,24 +17,31 @@ def setup(pypy_home):
     int pypy_execute_source_ptr(char* source, void* ptr);
 
     """)
-    pypy_home = os.path.abspath(pypy_home)
-    libdir = py.path.local(pypy_home)
-    if not libdir.join('libpypy-c.so').check():
-        raise Exception("Can't find libpypy-c.so, point PYPY_HOME to "
-                        "directory with libpypy-c.so")
-    libdir = str(libdir)
+    pypy_home = py.path.local(pypy_home)
+    if not pypy_home.join('libpypy-c.so').check():
+        libdir = pypy_home.join('bin')
+        if not libdir.join('libpypy-c.so').check():
+            libdir = pypy_home.join('pypy', 'goal')
+            if not libdir.join('libpypy-c.so').check():
+                raise Exception("Can't find libpypy-c.so, point PYPY_HOME to "
+                                "directory with libpypy-c.so")
+        pypy_home = libdir
+    libdir = str(pypy_home)
+    include_dir = pypy_home
+    while not include_dir.join('include').check(dir=1):
+        include_dir = include_dir.join('..')
 
     lib = ffi.verify("""
     #include <include/PyPy.h>
     """, libraries=["pypy-c"],
-        include_dirs=[pypy_home, os.path.dirname(pypy_home)],
+        include_dirs=[str(include_dir)],
         library_dirs=[libdir],
         extra_link_args=['-Wl,-rpath,%s' % libdir])
     curdir = os.path.dirname(os.path.abspath(__file__))
     defs = os.path.join(curdir, 'pypy.defs')
     ffi.cdef(open(defs).read())
     lib.rpython_startup_code()
-    res = lib.pypy_setup_home(os.path.join(pypy_home, 'bin'), 1)
+    res = lib.pypy_setup_home(os.path.join(libdir, 'pypy-c'), 1)
     pypy_side = os.path.join(curdir, 'pypy_side.py')
     if res == 1:
         raise Exception("cannot init pypy")
