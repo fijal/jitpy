@@ -5,7 +5,14 @@ import os
 
 ptr = None
 
-def setup(pypy_home):
+def setup(pypy_home=None):
+    if pypy_home is None:
+        try:
+            pypy_home = os.environ['PYPY_HOME']
+        except KeyError:
+            raise Exception('Neither PYPY_HOME specified nor passed to setup'
+                            ' as an argument')
+        
     ffi = cffi.FFI()
     ffi.cdef("""
     void rpython_startup_code(void);

@@ -41,17 +41,20 @@ characteristics. A simple example
 This function will be executed by the underlying PyPy, thus yielding a
 significant speed benefit (around 50x in my own measurements).
 
-Motivation
-==========
-
 Installing
 ==========
 
 You can install jitpy using ``pip install jitpy`` in your CPython
-installation.
+installation..
 
 You also need to download and unpack a very recent PyPy (newer than 2nd of Dec
 2014), which can be e.g.  downloaded from PyPy `nightlies`_.
+
+An example of usage:
+
+Download `64bit binary`_ or `32bit binary`_ for linux::
+
+
 
 
 Using jitpy
@@ -72,9 +75,10 @@ imported.
 
 The API looks like this:
 
-* ``jitpy.setup(pypy_home)`` - has to be called before anything in order to
+* ``jitpy.setup(pypy_home=None)`` - has to be called before anything in order to
   point to the correct PyPy build directory. ``pypy_home`` points to the
-  directory of pypy checkout/installation
+  directory of pypy checkout/installation. If None is passed, it'll default
+  to ``PYPY_HOME`` environment variable.
 
 * ``jitpy.wrapper.jittify(argtypes, restype=None)`` - a wrapper that's passed
   argument types as a list and restype as on of the:
@@ -212,5 +216,7 @@ However, your mileage may vary, try tools before jumping into conclusions.
 .. _`numba`: http://numba.pydata.org/
 .. _`basic benchmark`: https://github.com/fijal/jitpy/blob/master/benchmarks/basic.py
 .. _`array benchmark`: https://github.com/fijal/jitpy/blob/master/benchmarks/array.py
+.. _`64bit binary`: http://buildbot.pypy.org/nightly/trunk/pypy-c-jit-74798-f1b314da580e-linux64.tar.bz2
+.. _`32bit binary`: http://buildbot.pypy.org/nightly/trunk/pypy-c-jit-74798-f1b314da580e-linux.tar.bz2
 * :ref:`genindex`
 * :ref:`search`
