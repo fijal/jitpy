@@ -14,7 +14,7 @@ Contents:
 What it jitpy?
 ==============
 
-jitpy is a hack to embed PyPy inside CPython: the goal is to let PyPy optimize
+jitpy is a hack to embed `PyPy`_ inside CPython: the goal is to let PyPy optimize
 selected functions and call them from CPython.  The provided interface is
 limited: you can pass only simple builtin immutable types and numpy
 arrays. In other words, you cannot pass lists, dicts, and instances of custom
@@ -218,6 +218,7 @@ that are simply not supported by numba.
 
 However, your mileage may vary, try tools before jumping into conclusions.
 
+.. _`PyPy`: http://pypy.org/
 .. _`nightlies`: http://buildbot.pypy.org/nightly/trunk/
 .. _`numba`: http://numba.pydata.org/
 .. _`basic benchmark`: https://github.com/fijal/jitpy/blob/master/benchmarks/basic.py
