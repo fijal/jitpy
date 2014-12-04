@@ -41,6 +41,14 @@ characteristics. A simple example
 This function will be executed by the underlying PyPy, thus yielding a
 significant speed benefit (around 50x in my own measurements).
 
+Motivation
+==========
+
+The idea behind ``jitpy`` is to lower the barrier of entry to PyPy. A lot
+of people have complicated dependencies that don't work under PyPy, yet
+they want some way to speed up numeric computations. This is where ``jitpy``
+comes to play.
+
 Installing
 ==========
 
