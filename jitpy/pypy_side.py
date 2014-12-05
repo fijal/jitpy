@@ -3,7 +3,7 @@ import cffi, new, os, traceback, sys
 from _numpypy import multiarray as numpy
 
 ffi = cffi.FFI()
-ffi.cdef(open(os.path.join(cur_dir, "pypy.defs")).read())
+ffi.cdef(open(os.path.join(cur_dir, "pypydefs.py")).read())
 
 MAX_FUNCTIONS = 100
 all_callbacks = []

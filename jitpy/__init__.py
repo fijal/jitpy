@@ -50,7 +50,7 @@ def setup(pypy_home=None):
         library_dirs=[libdir],
         extra_link_args=['-Wl,-rpath,%s' % libdir])
     curdir = os.path.dirname(os.path.abspath(__file__))
-    defs = os.path.join(curdir, 'pypy.defs')
+    defs = os.path.join(curdir, 'pypydefs.py')
     ffi.cdef(open(defs).read())
     lib.rpython_startup_code()
     res = lib.pypy_setup_home(os.path.join(libdir, 'pypy-c'), 1)
