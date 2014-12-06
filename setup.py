@@ -17,7 +17,7 @@ Contact
 
 `Mailing list <https://groups.google.com/forum/#!forum/jitpy>`_
     """,
-    version='0.1.2',
+    version='0.1.3',
     packages=['jitpy'],
     zip_safe=False,
 
