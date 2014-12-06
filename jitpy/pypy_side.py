@@ -2,8 +2,18 @@
 import cffi, new, os, traceback, sys
 from _numpypy import multiarray as numpy
 
+pypy_defs = """
+typedef struct pypy_defs {
+   void (*setup_numpy_data)(int[]);
+   void (*clean_namespace)();
+   void* (* basic_register)(char *, char *, char *, char *);
+   void (*extra_source)(char *);
+   char *last_exception;
+} pypy_defs;
+"""
+
 ffi = cffi.FFI()
-ffi.cdef(open(os.path.join(cur_dir, "pypydefs.py")).read())
+ffi.cdef(pypy_defs)
 
 MAX_FUNCTIONS = 100
 all_callbacks = []

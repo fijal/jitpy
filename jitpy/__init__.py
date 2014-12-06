@@ -10,6 +10,16 @@ except:
 
 ptr = None
 
+pypy_defs = """
+typedef struct pypy_defs {
+   void (*setup_numpy_data)(int[]);
+   void (*clean_namespace)();
+   void* (* basic_register)(char *, char *, char *, char *);
+   void (*extra_source)(char *);
+   char *last_exception;
+} pypy_defs;
+"""
+
 def setup(pypy_home=None):
     if pypy_home is None:
         try:
@@ -50,8 +60,7 @@ def setup(pypy_home=None):
         library_dirs=[libdir],
         extra_link_args=['-Wl,-rpath,%s' % libdir])
     curdir = os.path.dirname(os.path.abspath(__file__))
-    defs = os.path.join(curdir, 'pypydefs.py')
-    ffi.cdef(open(defs).read())
+    ffi.cdef(pypy_defs)
     lib.rpython_startup_code()
     res = lib.pypy_setup_home(os.path.join(libdir, 'pypy-c'), 1)
     pypy_side = os.path.join(curdir, 'pypy_side.py')
