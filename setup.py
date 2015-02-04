@@ -31,6 +31,7 @@ Contact
     },
 
     install_requires=[
+        'cffi', 'pytest',
     ]
   )
 
