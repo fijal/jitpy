@@ -1,5 +1,3 @@
-
-
 if __name__ == '__main__':
   from setuptools import setup, Feature, Extension
   setup(
@@ -31,7 +29,6 @@ Contact
     },
 
     install_requires=[
-        'cffi', 'pytest',
+        'cffi', 'pytest', 'py', 'numpy'
     ]
   )
-
