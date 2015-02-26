@@ -1,4 +1,3 @@
-
 import py
 import cffi
 import os
@@ -27,7 +26,7 @@ def setup(pypy_home=None):
         except KeyError:
             raise Exception('Neither PYPY_HOME specified nor passed to setup'
                             ' as an argument')
-        
+
     ffi = cffi.FFI()
     ffi.cdef("""
     void rpython_startup_code(void);
@@ -62,7 +61,7 @@ def setup(pypy_home=None):
     curdir = os.path.dirname(os.path.abspath(__file__))
     ffi.cdef(pypy_defs)
     lib.rpython_startup_code()
-    res = lib.pypy_setup_home(os.path.join(libdir, 'pypy-c'), 1)
+    res = lib.pypy_setup_home(os.path.join(libdir, 'pypy-c').encode(), 1)
     pypy_side = os.path.join(curdir, 'pypy_side.py')
     if res == 1:
         raise Exception("cannot init pypy")
@@ -77,7 +76,7 @@ def setup(pypy_home=None):
         traceback.print_tb(sys.exc_info()[2])
         print "%%s:%%s" %% (e.__class__.__name__, e)
         raise
-    """ % (curdir, pypy_side))), ptr)
+    """ % (curdir, pypy_side))).encode(), ptr)
     if res:
         raise Exception("error running pypy side")
 
@@ -93,7 +92,7 @@ def setup(pypy_home=None):
        int type_num;
        ...;
     } PyArray_Descr;
-    
+
     typedef struct {
        char *data;
        int nd;
@@ -126,4 +125,4 @@ def setup(pypy_home=None):
 def extra_source(source):
     if not ptr:
         raise Exception("jitpy not initialized, call jitpy.setup(pypy_home)")
-    ptr.extra_source(source)
+    ptr.extra_source(source.encode())
