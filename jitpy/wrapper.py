@@ -1,4 +1,3 @@
-
 import inspect
 import py
 from jitpy import ffi, ptr
@@ -11,6 +10,11 @@ converters = {
     None: 'void',
     'array': 'intptr_t*',
 }
+
+
+def execute(source, namespace):
+    exec(source.compile(), namespace)
+
 
 def jittify(argtypes, restype=None):
     """ Wrap function into a callable visible from CPython, but run on
@@ -33,7 +37,7 @@ def jittify(argtypes, restype=None):
     def decorator(fn):
         def convert_numpy_array(ll_tp, arg):
             return ffi.cast("void *", id(arg))
-    
+
         lines = inspect.getsource(fn).splitlines()
         for i, line in enumerate(lines):
             if line.strip(' ').startswith('@'):
@@ -42,7 +46,8 @@ def jittify(argtypes, restype=None):
             break
         source = "\n".join(lines[i:])
         name = fn.__name__
-        handle = ptr.basic_register(source, name, ll_tp, ll_arrays)
+        handle = ptr.basic_register(source.encode(), name.encode(),
+                                    ll_tp.encode(), ll_arrays.encode())
         if not handle:
             raise Exception("basic_register failed")
         ll_handle = ffi.cast(ll_tp, handle)
@@ -65,7 +70,8 @@ def jittify(argtypes, restype=None):
         """ % {"args": argspec, 'conversions': conversions})
         namespace = {'ffi': ffi, 'll_handle': ll_handle,
                      'JitPyException':JitPyException, 'ptr': ptr}
-        exec source.compile() in namespace
+
+        execute(source, namespace)
         res = namespace['func']
         res.__name__ = fn.__name__
         return res
