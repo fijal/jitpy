@@ -63,7 +63,7 @@ Download `64bit binary`_ or `32bit binary`_ for linux::
    ~$ export PYPY_HOME=`pwd`/pypy-c-jit-74798-f1b314da580e-linux64/bin/
    ~$ pip install jitpy
    
-And you should be able not run examples (**NOTE:** since jitpy takes source
+And you should be able to run examples (**NOTE:** since jitpy takes source
 code via ``inspect`` module, you can't run jittify on functions typed
 from python interactive prompt)
 
